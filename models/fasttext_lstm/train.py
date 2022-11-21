@@ -1,6 +1,6 @@
-import config
-from trainer import FastTextLSTMModel
-from dataset import UIT_VFSC_Dataset, collate_fn
+from .config import config
+from .trainer import FastTextLSTMModel
+from .dataset import UIT_VFSC_Dataset, collate_fn
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping

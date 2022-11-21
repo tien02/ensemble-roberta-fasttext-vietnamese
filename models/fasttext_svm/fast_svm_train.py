@@ -38,8 +38,8 @@ if __name__ == "__main__":
     # Model
     fast_svm = Pipeline(steps=[
         ('pca', PCA(n_components=config.PCA_COMPONENTS)),
-        ('svm', SVC(probability=True, random_state=42))
-    ], memory=config.CACHE_NAME, verbose=True)
+        ('svm', SVC(probability=True, random_state=42, class_weight="balanced"))
+    ], verbose=True)
 
     print("\n\tModel")
     print(fast_svm)

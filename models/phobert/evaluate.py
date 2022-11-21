@@ -1,4 +1,4 @@
-import config 
+from config import config 
 import torch
 from torch.utils.data import DataLoader
 from dataset import tokenizer, UIT_VFSC_Dataset, collate_fn

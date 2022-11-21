@@ -1,10 +1,12 @@
-import config
+from .config import config
 import torch
+import numpy as np
 import pandas as pd
 import torch.nn as nn
-from utils import preprocess_fn
+from .utils import preprocess_fn
 from torch.utils.data import Dataset
 from gensim.models import KeyedVectors
+from sklearn.utils.class_weight import compute_class_weight
 
 word_vec = KeyedVectors.load(config.FAST_TEXT_PRETRAINED)
 
@@ -12,6 +14,8 @@ class UIT_VFSC_Dataset(Dataset):
     def __init__(self, root_dir, label="sentiments"):
         self.dataframe = pd.read_csv(root_dir, sep="\t")
         self.label = label
+        y = self.dataframe[self.label].values
+        self.class_weights = torch.tensor(compute_class_weight(class_weight="balanced",classes=np.unique(y),y=y),dtype=torch.float)
     
     def __len__(self):
         return len(self.dataframe)

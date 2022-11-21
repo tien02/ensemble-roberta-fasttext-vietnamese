@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
 import pandas as pd
+import numpy as np
 from .config import config
 from torch.utils.data import Dataset, DataLoader
 from transformers import PhobertTokenizer
-from utils import preprocess_fn
+from sklearn.utils.class_weight import compute_class_weight
+from .utils import preprocess_fn
 from termcolor import colored
 
 tokenizer = PhobertTokenizer.from_pretrained(config.CHECKPOINT)
@@ -13,7 +15,9 @@ class UIT_VFSC_Dataset(Dataset):
     def __init__(self, root_dir, label="sentiments"):
         self.dataframe = pd.read_csv(root_dir, sep="\t")
         self.label = label
-    
+        y = self.dataframe[self.label].values
+        self.class_weights = torch.tensor(compute_class_weight(class_weight="balanced",classes=np.unique(y),y=y),dtype=torch.float)
+
     def __len__(self):
         return len(self.dataframe)
 

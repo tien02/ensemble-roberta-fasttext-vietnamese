@@ -4,7 +4,7 @@ import torch.nn as nn
 from .dataset import UIT_VFSC_Dataset
 from .model import FastTextLSTM
 from torch.optim import Adam
-from torchmetrics import Accuracy, F1Score, Precision, Recall
+from torchmetrics import Accuracy, F1Score, Precision, Recall, MetricCollection
 from pytorch_lightning import LightningModule
 
 dataset = UIT_VFSC_Dataset(config.TRAIN_PATH, label=config.LABEL)
@@ -13,11 +13,13 @@ class FastTextLSTMModel(LightningModule):
     def __init__(self):
         super(FastTextLSTMModel, self).__init__()
         self.model = FastTextLSTM(config.VECTOR_SIZE, config.OUT_CHANNELS)
+        self.train_loss_fn = nn.CrossEntropyLoss(weight=dataset.class_weights)
         self.loss_fn = nn.CrossEntropyLoss()
-        self.acc = Accuracy(average="weighted", num_classes=config.OUT_CHANNELS)
-        self.f1 = F1Score(average="weighted", num_classes=config.OUT_CHANNELS)
-        self.precision_fn = Precision(average="weighted", num_classes=config.OUT_CHANNELS)
-        self.recall_fn = Recall(average="weighted", num_classes=config.OUT_CHANNELS)
+        self.test_metrics =  MetricCollection([
+          Precision(average="weighted", num_classes=config.OUT_CHANNELS),
+          Recall(average="weighted", num_classes=config.OUT_CHANNELS),
+          F1Score(average="weighted", num_classes=config.OUT_CHANNELS)])
+        self.val_acc_fn = Accuracy(average="weighted", num_classes=config.OUT_CHANNELS)
 
     def forward(self, x):
         return self.model(x)
@@ -28,7 +30,7 @@ class FastTextLSTMModel(LightningModule):
         logits = self.model(x)
         pred = nn.functional.log_softmax(logits, dim=1)
 
-        loss = self.loss_fn(pred, y)
+        loss = self.train_loss_fn(pred, y)
         self.log("train_loss", loss, batch_size=config.BATCH_SIZE, on_epoch=True, prog_bar=True)
         return loss
 
@@ -39,20 +41,9 @@ class FastTextLSTMModel(LightningModule):
         pred = nn.functional.log_softmax(logits, dim=1)
 
         loss = self.loss_fn(pred, y)
-
-        acc = self.acc(pred, y)
-        f1 = self.f1(pred, y)
-        pre = self.precision_fn(pred, y)
-        re = self.recall_fn(pred, y)
-
-        self.log_dict({
-            "test_loss": loss,
-            "test_accuracy": acc,
-            "test_f1": f1,
-            "test_precision": pre,
-            "test_recall": re
-        }, on_epoch=True, batch_size=config.BATCH_SIZE, prog_bar=True)
-        
+        metrics = self.test_metrics(pred, y)
+        self.log("test_loss", loss)
+        self.log_dict(metrics)
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
@@ -62,13 +53,14 @@ class FastTextLSTMModel(LightningModule):
 
         loss = self.loss_fn(pred, y)
 
-        acc = self.acc(pred, y)
+        self.val_acc_fn.update(pred, y)
+        self.log("val_loss", loss, prog_bar=True)
+        return loss
 
-
-        self.log_dict({
-            "val_loss": loss,
-            "val_accuracy": acc,}, 
-            on_epoch=True, batch_size=config.BATCH_SIZE, prog_bar=True)
+    def validation_epoch_end(self, outputs):
+        val_acc = self.val_acc_fn.compute()
+        self.log("val_acc", val_acc, prog_bar=True)
+        self.val_acc_fn.reset()
 
     def configure_optimizers(self):
         optimizer = Adam(self.model.parameters(), lr=config.LEARNING_RATE, eps=1e-6, weight_decay=0.01)
