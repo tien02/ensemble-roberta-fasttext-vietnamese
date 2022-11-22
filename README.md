@@ -39,7 +39,7 @@ I experimented on these models:
 
 - `ratio` in range[0, 1]
 
-- `pred1` is the model with superior performance, `pred2` vice versa. `Ensemble_pred` compare result with `pred1`'s model.
+- `pred1` is the model with superior performance, `pred2` vice versa. `Ensemble_pred` compares result with `pred1`'s model.
 
 ## Result
 
