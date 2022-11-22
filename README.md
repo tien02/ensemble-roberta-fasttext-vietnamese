@@ -13,14 +13,14 @@ In sentimenst task, there are 3 labels: `0: Positive`, `1:Neural` and `2:Negativ
 
 ## Model
 
-- Finetune PhoBERT on downstream task.
-- Build a FastText on train+val corpus, `vector_dim=300`.
+- Finetune [PhoBERT](https://arxiv.org/abs/2003.00744) on downstream task.
+- Build a [FastText](https://arxiv.org/abs/2003.00744) on train+val corpus, `vector_dim=300`.
 
 I experimented on these models:
-- PhoBERT(base/large) + FeedForward.
-- PhoBERT(base/large) + LSTM.
-- FastText + LSTM.
-- FastText + SVM.
+- `PhoBERT(base/large) + FeedForward`.
+- `PhoBERT(base/large) + LSTM`.
+- `FastText + LSTM`.
+- `FastText + SVM`.
 
 ## Experiment
 - Use [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) as loss function.
@@ -33,10 +33,13 @@ I experimented on these models:
 - Then experiment with [class_weight](https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html) in order to due with class imbalanced improved Precision and F1-score on all models.
 - Ensemble model with second experiment improve all models's performance.
 
-`Ensemble_pred= ratio * pred1 + (1-ratio) * pred2`
+<p align="center">
+<b>Ensemble_pred= ratio * pred1 + (1-ratio) * pred2</b>
+</p>
 
 - `ratio` in range[0, 1]
-- `pred1` is the model with superior performance, `pred2` vice versa. `Ensemble_pred` comparce result with `pred1`'s model.
+
+- `pred1` is the model with superior performance, `pred2` vice versa. `Ensemble_pred` compare result with `pred1`'s model.
 
 ## Result
 
