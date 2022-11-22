@@ -14,7 +14,7 @@ In sentimenst task, there are 3 labels: `0: Positive`, `1:Neural` and `2:Negativ
 ## Model
 
 - Finetune [PhoBERT](https://arxiv.org/abs/2003.00744) on downstream task.
-- Build a [FastText](https://arxiv.org/abs/2003.00744) on train+val corpus, `vector_dim=300`.
+- Build a [FastText](https://arxiv.org/abs/2003.00744) embedding on train+val corpus, `vector_dim=300`.
 
 I experimented on these models:
 - `PhoBERT(base/large) + FeedForward`.
