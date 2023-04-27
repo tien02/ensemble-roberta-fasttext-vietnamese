@@ -1,14 +1,16 @@
 # Ensemble PhoBERT & FastText in Vietnamese Sentiment Analysis task
 
+Fixing trainning command
+
 ## Dataset
 
-I used [UIT-VFSC (Vietnamese Students’ Feedback Corpus)](https://www.researchgate.net/publication/329645066_UIT-VSFC_Vietnamese_Students%27_Feedback_Corpus_for_Sentiment_Analysis) dataset in this project. This dataset collected students feedback about the school after every semester from 2013 to 2016. It contains over 16,000 sentences with 2 tasks: **sentiments** and **topics**. In this project I just experimented with sentiment task only.
+I used [UIT-VSFC (Vietnamese Students’ Feedback Corpus)](https://www.researchgate.net/publication/329645066_UIT-VSFC_Vietnamese_Students%27_Feedback_Corpus_for_Sentiment_Analysis) dataset in this project. This dataset collected students feedback about the school after every semester from 2013 to 2016. It contains over 16,000 sentences with 2 tasks: **sentiments** and **topics**. In this project I just experimented with sentiment task only.
 
 In sentimenst task, there are 3 labels: `0: Positive`, `1:Neural` and `2:Negative`. The distriution of this task is highly imbalanced, most of the label in `Positive` and `Negative` which tremendously affect the performance.
 
 <p align="center" float="left">
-  <img src="images/train_val_test_dist.png" height="200"/>
-  <img src="images/labels_dist.png" height=200" /> 
+  <img src="assets/train_val_test_dist.png" height="200"/>
+  <img src="assets/labels_dist.png" height=200" /> 
 </p>
 
 ## Model
