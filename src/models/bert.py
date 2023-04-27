@@ -1,10 +1,9 @@
-from .config import config
 import torch
 import torch.nn as nn
 from transformers import RobertaModel, RobertaConfig
 
 class PhoBertFeedForward_base(nn.Module):
-    def __init__(self, from_pretrained=True, freeze_backbone=False):
+    def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
         super(PhoBertFeedForward_base, self).__init__()
         phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base")
         self.bert = RobertaModel(config=phobert_config)
@@ -12,8 +11,8 @@ class PhoBertFeedForward_base(nn.Module):
           self.bert = RobertaModel.from_pretrained("vinai/phobert-base")
         self.classifier = nn.Sequential(
             nn.Linear(768, 768),
-            nn.Dropout(config.DROP_OUT),
-            nn.Linear(768, config.NUM_CLASSES))
+            nn.Dropout(drop_out),
+            nn.Linear(768, out_channels))
         
         if freeze_backbone:
             for param in self.bert.parameters():
@@ -27,7 +26,7 @@ class PhoBertFeedForward_base(nn.Module):
 
 
 class PhoBertFeedForward_large(nn.Module):
-    def __init__(self, from_pretrained=True, freeze_backbone=False):
+    def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
         super(PhoBertFeedForward_large, self).__init__()
         phobert_config = RobertaConfig.from_pretrained("vinai/phobert-large")
         self.bert = RobertaModel(config=phobert_config)
@@ -35,8 +34,8 @@ class PhoBertFeedForward_large(nn.Module):
           self.bert = RobertaModel.from_pretrained("vinai/phobert-large")
         self.classifier = nn.Sequential(
             nn.Linear(1024, 1024),
-            nn.Dropout(config.DROP_OUT),
-            nn.Linear(1024, config.NUM_CLASSES))
+            nn.Dropout(drop_out),
+            nn.Linear(1024, out_channels))
         
         if freeze_backbone:
             for param in self.bert.parameters():
@@ -50,7 +49,7 @@ class PhoBertFeedForward_large(nn.Module):
 
 
 class PhoBERTLSTM_base(nn.Module):
-  def __init__(self, from_pretrained=True, freeze_backbone=False):
+  def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
     super(PhoBERTLSTM_base, self).__init__()
     phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base")
     self.bert = RobertaModel(config=phobert_config)
@@ -59,8 +58,8 @@ class PhoBERTLSTM_base(nn.Module):
 
     self.lstm = nn.LSTM(input_size=768, hidden_size=768, 
                         batch_first=True, bidirectional=True, num_layers=1)
-    self.dropout = nn.Dropout(config.DROP_OUT)
-    self.linear = nn.Linear(768 * 2, config.NUM_CLASSES)
+    self.dropout = nn.Dropout(drop_out)
+    self.linear = nn.Linear(768 * 2, out_channels)
     self.act = nn.LogSoftmax(dim=1)
 
     if freeze_backbone:
@@ -75,7 +74,7 @@ class PhoBERTLSTM_base(nn.Module):
     return out
 
 class PhoBERTLSTM_large(nn.Module):
-  def __init__(self, from_pretrained=True, freeze_backbone=False):
+  def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
     super(PhoBERTLSTM_large, self).__init__()
     phobert_config = RobertaConfig.from_pretrained("vinai/phobert-large")
     self.bert = RobertaModel(config=phobert_config)
@@ -85,8 +84,8 @@ class PhoBERTLSTM_large(nn.Module):
     self.lstm = nn.LSTM(input_size=1024, 
                         hidden_size=1024, 
                         batch_first=True, bidirectional=True, num_layers=1)
-    self.dropout = nn.Dropout(config.DROP_OUT)
-    self.linear = nn.Linear(1024 * 2, config.NUM_CLASSES)
+    self.dropout = nn.Dropout(drop_out)
+    self.linear = nn.Linear(1024 * 2, out_channels)
 
     if freeze_backbone:
       for param in self.bert.parameters():

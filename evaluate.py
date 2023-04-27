@@ -1,5 +1,5 @@
 import torch
-import config
+import src.config as config
 import joblib
 from tqdm import tqdm
 import numpy as np
@@ -7,14 +7,14 @@ from termcolor import colored
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from models.phobert import UIT_VFSC_Dataset as BERTDataset
-from models.phobert import collate_fn as BERTDataset_collate_fn
-from models.fasttext_lstm import UIT_VFSC_Dataset as LSTMDataset
-from models.fasttext_lstm import collate_fn as LSTMDataset_collate_fn
+from models.bert import UIT_VFSC_Dataset as BERTDataset
+from models.bert import collate_fn as BERTDataset_collate_fn
+from models.lstm import UIT_VFSC_Dataset as LSTMDataset
+from models.lstm import collate_fn as LSTMDataset_collate_fn
 from models.fasttext_svm import converter
 
-from models.phobert import PhoBertFeedForward_base, PhoBERTLSTM_base, PhoBertFeedForward_large, PhoBERTLSTM_large, PhoBERTModel
-from models.fasttext_lstm import FastTextLSTMModel
+from models.bert import PhoBertFeedForward_base, PhoBERTLSTM_base, PhoBertFeedForward_large, PhoBERTLSTM_large, PhoBERTModel
+from models.lstm import FastTextLSTMModel
 from torch.utils.data import DataLoader
 from torchmetrics import Accuracy, Precision, Recall, F1Score
 

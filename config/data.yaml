@@ -1,0 +1,17 @@
+model:
+  init_args:
+    model:
+      class_path: src.models.PhoBertFeedForward_base
+      init_args:
+        from_pretrained: True
+        freeze_backbone: False
+        drop_out: 0.1
+        out_channels: 3
+        
+data:
+  init_args:
+    root_data_dir: ./data
+    label: sentiments
+    model_type: bert
+    batch_size: 64
+    num_workers: 2

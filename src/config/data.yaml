@@ -1,0 +1,9 @@
+path:
+  train: ./data/train
+  val: ./data/dev
+  test: ./data/test
+
+label: sentiments # 'sentiments' or 'topics'
+out_channels: 3
+
+num_workers: 2
