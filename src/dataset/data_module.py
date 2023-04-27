@@ -28,23 +28,23 @@ class DataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         if self.model_type == "bert":
-            return DataLoader(dataset=self.train_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.train_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.num_workers)
         
         if self.model_type == "lstm":
-            return DataLoader(dataset=self.train_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.train_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.num_workers)
         
 
     def val_dataloader(self):
         if self.model_type == "bert":
-            return DataLoader(dataset=self.val_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.val_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.num_workers)
         
         if self.model_type == "lstm":
-            return DataLoader(dataset=self.val_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.val_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.num_workers)
     
 
     def test_dataloader(self):
         if self.model_type == "bert":
-            return DataLoader(dataset=self.test_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.test_data, batch_size=self.batch_size, collate_fn=bert_collate_fn, num_workers=self.num_workers)
         
         if self.model_type == "lstm":
-            return DataLoader(dataset=self.test_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.NUM_WORKERS)
+            return DataLoader(dataset=self.test_data, batch_size=self.batch_size, collate_fn=lstm_collate_fn, num_workers=self.num_workers)

@@ -1,0 +1,21 @@
+# TRAINER
+seed: 42
+max_epochs: 100
+val_each_epoch: 2
+learning_rate: 1e-4
+accelarator: "gpu"
+
+# TENSORBOARD LOGGING
+tensorboard:
+  dir: logging
+  name: experiment
+  version: 0
+
+# ckpt
+ckpt_dir: logging/experiment/0/ckpt
+
+# CKPT FOR EVALUATE
+test_ckpt: null
+
+# CKPT FOR CONTINUE TRAINING
+keep_training_path: null

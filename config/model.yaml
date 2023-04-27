@@ -1,0 +1,8 @@
+model_name: BERT-FF-BASE 
+# [BERT | LSTM]-[FF | LSTM]-[BASE | LARGE] 
+# FASTTEXT-LSTM: FastText + LSTM
+from_pretrained: True
+freeze_backbone: False
+drop_out: 0.1
+out_channels: 3
+vector_size: 300

@@ -1,0 +1,1 @@
+python main.py --task train --data config/data.yaml --model config/model.yaml --trainer config/trainer.yaml

@@ -1,6 +1,13 @@
 # Ensemble PhoBERT & FastText in Vietnamese Sentiment Analysis task
 
-Fixing trainning command
+UPDATE:
+
+* Optimize code directory structure
+
+TO DO:
+
+* fix ensemble procedure
+* Containerize with Docker
 
 ## Dataset
 
@@ -42,6 +49,65 @@ I experimented on these models:
 - `ratio` in range[0, 1]
 
 - `pred1` is the model with superior performance, `pred2` vice versa. `Ensemble_pred` compares result with `pred1`'s model.
+
+## Directory Structure
+Expect directory structure be like:
+```
+├── /config
+├── /data
+│   ├── README.txt
+│   ├── dev
+│   │   ├── sentiments.txt
+│   │   ├── sents.txt
+│   │   └── topics.txt
+│   ├── test
+│   │   ├── sentiments.txt
+│   │   ├── sents.txt
+│   │   └── topics.txt
+│   └── train
+│       ├── sentiments.txt
+│       ├── sents.txt
+│       └── topics.txt
+├── /src
+├── ensemble.py
+├── main.py
+├── requirements.txt
+├── test.sh
+├── train.sh
+├── train_fasttext.sh
+├── train_svm.sh
+└── utils.py
+```
+
+`data` is the `UIT-VSFC` downloaded
+
+## Run code
+
+Run the following command for execution information:
+```
+python main.py --help
+```
+
+1. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+2. Train FastText Embedding
+```
+bash train_fasttext.sh
+```
+
+3. Train BERT-base models & FastText-LSTM
+* Check hyperpamter at `config` folder, modify it as your need
+```
+bash train.sh
+```
+
+4. Test BERT-base models & FastText-LSTM
+```
+bash test.sh
+```
 
 ## Result
 

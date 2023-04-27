@@ -1,12 +1,16 @@
 import yaml
 import torch
 import torch.nn as nn
+from torch.optim import Adam
 from ..dataset import UIT_VSFC
 from torchmetrics import F1Score, Precision, Recall, MetricCollection, Accuracy
 from pytorch_lightning import LightningModule
 
 with open("./src/config/data.yaml") as f:
     data_config = yaml.safe_load(f)
+
+with open("./config/trainer.yaml") as f:
+    trainer_config = yaml.safe_load(f)
 
 dataset = UIT_VSFC(data_dir=data_config['path']['train'], label=data_config['label'],model_type='bert')
 
@@ -60,9 +64,18 @@ class PhoBERTModel(LightningModule):
         self.log("val_loss", loss, prog_bar=True)
         return loss
     
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self,):
         # loss = torch.stack(outputs).mean()
         val_acc = self.val_acc_fn.compute()
         # self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", val_acc, prog_bar=True)
         self.val_acc_fn.reset()
+    
+    def configure_optimizers(self):
+        optimizer = Adam(self.model.parameters(), lr=float(trainer_config['learning_rate']), eps=1e-6, weight_decay=0.01)
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=float(trainer_config['learning_rate']),
+                    steps_per_epoch=len(dataset), epochs=trainer_config['max_epochs'])
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": scheduler
+        }
