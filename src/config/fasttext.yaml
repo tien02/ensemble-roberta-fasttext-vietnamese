@@ -1,2 +1,0 @@
-fasttext_embedding_path: src/embedding/fasttext_train_dev.model
-vector_size: 300

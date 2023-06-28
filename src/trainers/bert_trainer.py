@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from torchmetrics import F1Score, Precision, Recall, MetricCollection, Accuracy
-from pytorch_lightning import LightningModule
+from lightning.pytorch import LightningModule
 
 with open("./config/trainer.yaml") as f:
     trainer_config = yaml.safe_load(f)
@@ -67,9 +67,10 @@ class PhoBERTModel(LightningModule):
     
     def configure_optimizers(self):
         optimizer = Adam(self.model.parameters(), lr=float(trainer_config['learning_rate']), eps=1e-6, weight_decay=0.01)
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=float(trainer_config['learning_rate']),
-                    steps_per_epoch=self.trainer.estimated_stepping_batches, epochs=trainer_config['max_epochs'])
-        return {
-            "optimizer": optimizer,
-            "lr_scheduler": scheduler
-        }
+        # scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=float(trainer_config['learning_rate']),
+        #             steps_per_epoch=self.trainer.estimated_stepping_batches, epochs=trainer_config['max_epochs'])
+        # return {
+        #     "optimizer": optimizer,
+        #     "lr_scheduler": scheduler
+        # }
+        return optimizer

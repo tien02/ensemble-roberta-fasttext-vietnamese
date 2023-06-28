@@ -7,11 +7,11 @@ from transformers import PhobertTokenizer
 
 import numpy as np
 import pandas as pd
+from underthesea import word_tokenize
 from gensim.models import KeyedVectors
 from sklearn.utils.class_weight import compute_class_weight
 
 from .utils import preprocess_fn
-
 
 class TextDataset(Dataset):
     def __init__(self, data_dir:str, model_type:str = "bert", fasttext_embedding:str = None):
@@ -26,7 +26,7 @@ class TextDataset(Dataset):
 
         self.features = pd.read_table(os.path.join(data_dir, "sents.txt"), names=['sents'])
         self.labels = pd.read_table(os.path.join(data_dir, "cats.txt"), names=["labels"])
-        
+
         assert model_type in ['bert', 'lstm'], f"Expect 'model_type' argument to be 'bert' or 'lstm', unknown '{model_type}'."
         self.model_type = model_type
 
@@ -46,14 +46,16 @@ class TextDataset(Dataset):
     def __getitem__(self, index):
         X = self.features.iloc[index].values[0]
         y = self.labels.iloc[index].values[0]
-        x_tokens = preprocess_fn(X)
+        processed_txt = preprocess_fn(X)
         
         if self.model_type == "bert":
-            tokens = self.tokenizer(x_tokens)
+            text = word_tokenize(processed_txt, format='text')
+
+            tokens = self.tokenizer(text)
             return torch.tensor(tokens["input_ids"]), torch.tensor(tokens["attention_mask"]), torch.tensor(y)
         else:
             x_embed = []
-            for x_token in x_tokens:
+            for x_token in processed_txt:
                 try:
                     x_embed.append(torch.unsqueeze(torch.tensor(self.word_vec.wv[x_token]), dim=0))
                 except Exception as e:

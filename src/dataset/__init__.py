@@ -1,1 +1,1 @@
-from .data_module import DataModule, UIT_VSFC
+from .data_module import DataModule, TextDataset

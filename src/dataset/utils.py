@@ -6,25 +6,6 @@ import py_vncorenlp
 import torch
 from torch import nn
 
-class WordSegmenter:
-    vncorenlp_data_dir = 'vncorenlp'
-    if not os.path.exists('vncorenlp'):
-        os.makedirs('vncorenlp')
-    absolute_vncorenlp_path = os.path.abspath('vncorenlp')
-
-    if len(os.listdir(absolute_vncorenlp_path)) == 0:
-        py_vncorenlp.download_model(save_dir=absolute_vncorenlp_path)
-    
-    rdrsegmenter = None
-
-    @staticmethod
-    def getSegmenter():
-        if __class__.rdrsegmenter is None:
-            __class__.rdrsegmenter = py_vncorenlp.VnCoreNLP(annotators=["wseg"], save_dir= __class__.absolute_vncorenlp_path)
-        return __class__.rdrsegmenter
-
-
-
 def bert_collate_fn(batch):
     '''
     Create collate function for batch of data when feeding to BERT base model
@@ -68,5 +49,4 @@ def preprocess_fn(text):
     text = unicodedata.normalize('NFKC', str(text))
     text = re.sub('\s+', ' ', text)
     text = text.strip()
-    text = WordSegmenter.getSegmenter().word_segment(text)
-    return text[0]
+    return text

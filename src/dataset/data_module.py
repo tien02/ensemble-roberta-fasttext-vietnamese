@@ -1,10 +1,10 @@
 import os
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
+from lightning.pytorch import LightningDataModule
 from .data import TextDataset
 from .utils import bert_collate_fn, lstm_collate_fn
 
-class DataModule(pl.LightningDataModule):
+class DataModule(LightningDataModule):
     def __init__(self, root_data_dir:str, model_type:str, batch_size:int, num_workers:int, fasttext_embedding:str=None):
         super().__init__()
         self.root_data_dir = root_data_dir
@@ -18,6 +18,7 @@ class DataModule(pl.LightningDataModule):
         self.fasttext = fasttext_embedding
         if model_type == 'bert':
             self.fasttext = None
+        self.model_type = model_type
     
 
     def setup(self, stage: str):
