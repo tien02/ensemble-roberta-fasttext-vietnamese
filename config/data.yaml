@@ -1,5 +1,4 @@
 root_data_dir: ./data
-label: sentiments
 model_type: bert  # or 'lstm' for FastText-LSTM
 batch_size: 64
 num_workers: 2
