@@ -1,8 +1,29 @@
+import os
 import re
-from pyvi import ViTokenizer
+import unicodedata
+import py_vncorenlp
 
 import torch
 from torch import nn
+
+class WordSegmenter:
+    vncorenlp_data_dir = 'vncorenlp'
+    if not os.path.exists('vncorenlp'):
+        os.makedirs('vncorenlp')
+    absolute_vncorenlp_path = os.path.abspath('vncorenlp')
+
+    if len(os.listdir(absolute_vncorenlp_path)) == 0:
+        py_vncorenlp.download_model(save_dir=absolute_vncorenlp_path)
+    
+    rdrsegmenter = None
+
+    @staticmethod
+    def getSegmenter():
+        if __class__.rdrsegmenter is None:
+            __class__.rdrsegmenter = py_vncorenlp.VnCoreNLP(annotators=["wseg"], save_dir= __class__.absolute_vncorenlp_path)
+        return __class__.rdrsegmenter
+
+
 
 def bert_collate_fn(batch):
     '''
@@ -44,12 +65,8 @@ def preprocess_fn(text):
     '''
     Preprocessing text
     '''
-    sent = re.sub(r'[^\w\s]', '', text)
-    tokens = ViTokenizer.tokenize(sent)
-    tokens = tokens.split()
-    for token in tokens:
-        for t in token:
-            if t.isnumeric() or t.isdigit():
-                tokens.remove(token)
-                break
-    return " ".join(tokens)
+    text = unicodedata.normalize('NFKC', str(text))
+    text = re.sub('\s+', ' ', text)
+    text = text.strip()
+    text = WordSegmenter.getSegmenter().word_segment(text)
+    return text[0]
