@@ -23,11 +23,11 @@ class DataModule(pl.LightningDataModule):
 
     def setup(self, stage: str):
         if stage == "fit":
-            self.train_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "train"), label=self.label, model_type=self.model_type, fasttext_embedding=self.fasttext)
-            self.val_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "dev"), label=self.label, model_type=self.model_type, fasttext_embedding=self.fasttext)
+            self.train_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "train"), model_type=self.model_type, fasttext_embedding=self.fasttext)
+            self.val_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "dev"), model_type=self.model_type, fasttext_embedding=self.fasttext)
         
         if stage == "test":
-            self.test_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "test"), label=self.label, model_type=self.model_type, fasttext_embedding=self.fasttext)
+            self.test_data = TextDataset(data_dir=os.path.join(self.root_data_dir, "test"), model_type=self.model_type, fasttext_embedding=self.fasttext)
     
 
     def train_dataloader(self):
