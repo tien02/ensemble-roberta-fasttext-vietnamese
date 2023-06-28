@@ -5,7 +5,7 @@ from .data import TextDataset
 from .utils import bert_collate_fn, lstm_collate_fn
 
 class DataModule(pl.LightningDataModule):
-    def __init__(self, root_data_dir:str, label:str, model_type:str, batch_size:int, num_workers:int, fasttext_embedding:str=None):
+    def __init__(self, root_data_dir:str, model_type:str, batch_size:int, num_workers:int, fasttext_embedding:str=None):
         super().__init__()
         self.root_data_dir = root_data_dir
         if model_type == "bert":
@@ -13,7 +13,6 @@ class DataModule(pl.LightningDataModule):
         else:
             self.collate_fn = lstm_collate_fn
 
-        self.label = label
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.fasttext = fasttext_embedding
