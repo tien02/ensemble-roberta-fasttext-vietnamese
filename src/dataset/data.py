@@ -14,7 +14,7 @@ from .utils import preprocess_fn
 
 
 class TextDataset(Dataset):
-    def __init__(self, data_dir:str, label:str = "sentiments", model_type:str = "bert", fasttext_embedding:str = None):
+    def __init__(self, data_dir:str, model_type:str = "bert", fasttext_embedding:str = None):
         '''
         Parameters:
             data_dir (str): path to data directory
