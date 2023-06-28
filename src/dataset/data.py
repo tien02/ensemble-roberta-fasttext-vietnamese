@@ -13,7 +13,7 @@ from sklearn.utils.class_weight import compute_class_weight
 from .utils import preprocess_fn
 
 
-class UIT_VSFC(Dataset):
+class TextDataset(Dataset):
     def __init__(self, data_dir:str, label:str = "sentiments", model_type:str = "bert", fasttext_embedding:str = None):
         '''
         Parameters:
@@ -21,13 +21,11 @@ class UIT_VSFC(Dataset):
             label (str) : Type of label, support "sentiments" or "topics"
             model_type (str): Type of model, support "bert" or "lstm"
         '''
-        self.features = pd.read_table(os.path.join(data_dir, "sents.txt"), names=['sents'])
+        assert os.path.exists(os.path.join(data_dir, "sents.txt")), f"Expect input data in {os.path.join(data_dir, 'sents.txt')}"
+        assert os.path.exists(os.path.join(data_dir, "cats.txt")), f"Expect output data in {os.path.join(data_dir, 'cats.txt')}"
 
-        assert label in ["sentiments", "topics"], f"Expect 'label' argument to be 'sentiments' or 'topics', unknown '{label}'."
-        if label == "sentiments":
-            self.labels = pd.read_table(os.path.join(data_dir, "sentiments.txt"), names=["labels"])
-        if label == "topics":
-            self.labels = pd.read_table(os.path.join(data_dir, "topics.txt"), names=["labels"])
+        self.features = pd.read_table(os.path.join(data_dir, "sents.txt"), names=['sents'])
+        self.labels = pd.read_table(os.path.join(data_dir, "cats.txt"), names=["labels"])
         
         assert model_type in ['bert', 'lstm'], f"Expect 'model_type' argument to be 'bert' or 'lstm', unknown '{model_type}'."
         self.model_type = model_type
