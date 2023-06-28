@@ -2,35 +2,26 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from ..dataset import UIT_VSFC
 from ..models import BiLSTM
 
 from torch.optim import Adam
 from torchmetrics import Accuracy, F1Score, Precision, Recall, MetricCollection
 from pytorch_lightning import LightningModule
 
-with open("./src/config/data.yaml") as f:
-    data_config = yaml.safe_load(f)
-
-with open("src/config/fasttext.yaml") as f:
-    fasttext_config = yaml.safe_load(f)
-
 with open("./config/trainer.yaml") as f:
     trainer_config = yaml.safe_load(f)
 
-dataset = UIT_VSFC(data_dir=data_config['path']['train'], label=data_config['label'],model_type='lstm', fasttext_embedding=fasttext_config['fasttext_embedding_path'])
-
 class FastTextLSTMModel(LightningModule):
-    def __init__(self, dropout:float = 0.1):
+    def __init__(self, out_channels:int, hidden_size:int = 300, dropout:float = 0.1, loss_weight=None):
         super(FastTextLSTMModel, self).__init__()
-        self.model = BiLSTM(vector_size=fasttext_config['vector_size'],out_channels=data_config['out_channels'], drop_out=dropout)
-        self.train_loss_fn = nn.CrossEntropyLoss(weight=dataset.class_weights)
+        self.model = BiLSTM(vector_size=hidden_size,out_channels=out_channels, drop_out=dropout)
+        self.train_loss_fn = nn.CrossEntropyLoss(weight=loss_weight)
         self.loss_fn = nn.CrossEntropyLoss()
         self.test_metrics =  MetricCollection([
-          Precision(average="weighted", num_classes=data_config['out_channels']),
-          Recall(average="weighted", num_classes=data_config['out_channels']),
-          F1Score(average="weighted", num_classes=data_config['out_channels'])])
-        self.val_acc_fn = Accuracy(average="weighted", num_classes=data_config['out_channels'])
+          Precision(average="weighted", num_classes=out_channels),
+          Recall(average="weighted", num_classes=out_channels),
+          F1Score(average="weighted", num_classes=out_channels)])
+        self.val_acc_fn = Accuracy(average="weighted", num_classes=out_channels)
 
     def forward(self, x):
         return self.model(x)
@@ -76,7 +67,7 @@ class FastTextLSTMModel(LightningModule):
     def configure_optimizers(self):
         optimizer = Adam(self.model.parameters(), lr=trainer_config['learning_rate'], eps=1e-6, weight_decay=0.01)
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=trainer_config['learning_rate'],
-                    steps_per_epoch=len(dataset), epochs=trainer_config['max_epochs'])
+                    steps_per_epoch=self.trainer.estimated_stepping_batches, epochs=trainer_config['max_epochs'])
         return {
             "optimizer": optimizer,
             "lr_scheduler": scheduler

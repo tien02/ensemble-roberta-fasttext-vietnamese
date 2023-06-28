@@ -2,29 +2,23 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from ..dataset import UIT_VSFC
 from torchmetrics import F1Score, Precision, Recall, MetricCollection, Accuracy
 from pytorch_lightning import LightningModule
-
-with open("./src/config/data.yaml") as f:
-    data_config = yaml.safe_load(f)
 
 with open("./config/trainer.yaml") as f:
     trainer_config = yaml.safe_load(f)
 
-dataset = UIT_VSFC(data_dir=data_config['path']['train'], label=data_config['label'],model_type='bert')
-
 class PhoBERTModel(LightningModule):
-    def __init__(self, model):
+    def __init__(self, model, out_channels:int, loss_weight=None):
         super(PhoBERTModel, self).__init__()
         self.model = model
-        self.train_loss_fn = nn.CrossEntropyLoss(weight=dataset.class_weights)
+        self.train_loss_fn = nn.CrossEntropyLoss(weight=loss_weight)
         self.loss_fn = nn.CrossEntropyLoss()
         self.test_metrics =  MetricCollection([
-          Precision(average="weighted", num_classes=data_config['out_channels']),
-          Recall(average="weighted", num_classes=data_config['out_channels']),
-          F1Score(average="weighted", num_classes=data_config['out_channels'])])
-        self.val_acc_fn = Accuracy(average="weighted", num_classes=data_config['out_channels'])
+          Precision(average="weighted", num_classes=out_channels),
+          Recall(average="weighted", num_classes=out_channels),
+          F1Score(average="weighted", num_classes=out_channels)])
+        self.val_acc_fn = Accuracy(average="weighted", num_classes=out_channels)
 
     def forward(self, input_ids, attn_mask):
         return self.model(input_ids, attn_mask)
@@ -74,7 +68,7 @@ class PhoBERTModel(LightningModule):
     def configure_optimizers(self):
         optimizer = Adam(self.model.parameters(), lr=float(trainer_config['learning_rate']), eps=1e-6, weight_decay=0.01)
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=float(trainer_config['learning_rate']),
-                    steps_per_epoch=len(dataset), epochs=trainer_config['max_epochs'])
+                    steps_per_epoch=self.trainer.estimated_stepping_batches, epochs=trainer_config['max_epochs'])
         return {
             "optimizer": optimizer,
             "lr_scheduler": scheduler
