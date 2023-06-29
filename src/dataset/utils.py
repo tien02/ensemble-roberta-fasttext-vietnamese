@@ -1,7 +1,6 @@
-import os
 import re
 import unicodedata
-import py_vncorenlp
+from underthesea import word_tokenize, sent_tokenize
 
 import torch
 from torch import nn
@@ -49,4 +48,5 @@ def preprocess_fn(text):
     text = unicodedata.normalize('NFKC', str(text))
     text = re.sub('\s+', ' ', text)
     text = text.strip()
+    text = " ".join([word_tokenize(sent, format='text') for sent in  sent_tokenize(text)])
     return text

@@ -92,6 +92,6 @@ def load_trainer(path_to_yaml_file:str):
     trainer = Trainer(accelerator=trainer_config['accelarator'], check_val_every_n_epoch=trainer_config['val_each_epoch'],
                     gradient_clip_val=1.0,max_epochs=trainer_config['max_epochs'],
                     enable_checkpointing=True, deterministic=True, default_root_dir=trainer_config['ckpt_dir'],
-                    callbacks=[checkpoint_callback, early_stopping], logger=logger, accumulate_grad_batches=4,log_every_n_steps=100)
+                    callbacks=[checkpoint_callback, early_stopping], logger=logger, accumulate_grad_batches=4,log_every_n_steps=1)
 
     return trainer

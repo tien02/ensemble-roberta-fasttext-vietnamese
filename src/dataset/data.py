@@ -7,8 +7,8 @@ from transformers import PhobertTokenizer
 
 import numpy as np
 import pandas as pd
-from underthesea import word_tokenize
 from gensim.models import KeyedVectors
+from underthesea import word_tokenize, sent_tokenize
 from sklearn.utils.class_weight import compute_class_weight
 
 from .utils import preprocess_fn
@@ -49,9 +49,7 @@ class TextDataset(Dataset):
         processed_txt = preprocess_fn(X)
         
         if self.model_type == "bert":
-            text = word_tokenize(processed_txt, format='text')
-
-            tokens = self.tokenizer(text)
+            tokens = self.tokenizer(processed_txt)
             return torch.tensor(tokens["input_ids"]), torch.tensor(tokens["attention_mask"]), torch.tensor(y)
         else:
             x_embed = []
