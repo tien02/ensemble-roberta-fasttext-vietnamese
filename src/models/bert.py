@@ -5,10 +5,10 @@ from transformers import RobertaModel, RobertaConfig
 class PhoBertFeedForward_base(nn.Module):
     def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
         super(PhoBertFeedForward_base, self).__init__()
-        phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base")
+        phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base-v2")
         self.bert = RobertaModel(config=phobert_config)
         if from_pretrained:
-          self.bert = RobertaModel.from_pretrained("vinai/phobert-base")
+          self.bert = RobertaModel.from_pretrained("vinai/phobert-base-v2")
         self.classifier = nn.Sequential(
             nn.Linear(768, 768),
             nn.Dropout(drop_out),
@@ -51,10 +51,10 @@ class PhoBertFeedForward_large(nn.Module):
 class PhoBERTLSTM_base(nn.Module):
   def __init__(self, from_pretrained:bool=True, freeze_backbone:bool=False, drop_out:float=0.1, out_channels:int=3):
     super(PhoBERTLSTM_base, self).__init__()
-    phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base")
+    phobert_config = RobertaConfig.from_pretrained("vinai/phobert-base-v2")
     self.bert = RobertaModel(config=phobert_config)
     if from_pretrained:
-        self.bert = RobertaModel.from_pretrained("vinai/phobert-base")
+        self.bert = RobertaModel.from_pretrained("vinai/phobert-base-v2")
 
     self.lstm = nn.LSTM(input_size=768, hidden_size=768, 
                         batch_first=True, bidirectional=True, num_layers=1)

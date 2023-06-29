@@ -8,7 +8,6 @@ from transformers import PhobertTokenizer
 import numpy as np
 import pandas as pd
 from gensim.models import KeyedVectors
-from underthesea import word_tokenize, sent_tokenize
 from sklearn.utils.class_weight import compute_class_weight
 
 from .utils import preprocess_fn
@@ -33,7 +32,7 @@ class TextDataset(Dataset):
         if self.model_type == 'lstm':
             self.word_vec = KeyedVectors.load(fasttext_embedding)
 
-        self.tokenizer = PhobertTokenizer.from_pretrained("vinai/phobert-base")
+        self.tokenizer = PhobertTokenizer.from_pretrained("vinai/phobert-base-v2")
 
         y = self.labels.values
         self.class_weights = torch.tensor(compute_class_weight(class_weight="balanced",classes=np.unique(np.ravel(y)),y=np.ravel(y)),dtype=torch.float)
@@ -49,7 +48,7 @@ class TextDataset(Dataset):
         processed_txt = preprocess_fn(X)
         
         if self.model_type == "bert":
-            tokens = self.tokenizer(processed_txt)
+            tokens = self.tokenizer(processed_txt, truncation=True,padding=True, max_length=256)
             return torch.tensor(tokens["input_ids"]), torch.tensor(tokens["attention_mask"]), torch.tensor(y)
         else:
             x_embed = []
