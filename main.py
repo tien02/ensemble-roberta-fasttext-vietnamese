@@ -1,7 +1,7 @@
 import os
 import yaml
 import argparse
-from pytorch_lightning import seed_everything
+from lightning.pytorch import seed_everything
 from utils import load_data, load_model, load_trainer
 
 def parse_opt():

@@ -1,5 +1,5 @@
 gensim==4.2.0
-pytorch_lightning==2.0.1
+lightning==2.0.2
 pyvi==0.1.1
 PyYAML==6.0
 termcolor==2.3.0

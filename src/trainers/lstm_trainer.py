@@ -6,7 +6,7 @@ from ..models import BiLSTM
 
 from torch.optim import Adam
 from torchmetrics import Accuracy, F1Score, Precision, Recall, MetricCollection
-from pytorch_lightning import LightningModule
+from lightning.pytorch import LightningModule
 
 with open("./config/trainer.yaml") as f:
     trainer_config = yaml.safe_load(f)
